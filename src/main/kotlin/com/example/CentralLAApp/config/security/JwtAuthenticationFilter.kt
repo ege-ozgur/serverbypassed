@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 
-@Component
+/*@Component
 class JwtAuthenticationFilter(
     val jwtService: JwtService,
     val userDetailsService: UserDetailsService,
@@ -82,4 +82,4 @@ class JwtAuthenticationFilter(
         response.writer.flush()
     }
 
-}
+}*/

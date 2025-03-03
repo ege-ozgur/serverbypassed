@@ -30,7 +30,7 @@ class SecurityConfig {
     @Bean
     fun securityFilterChain(
         http: HttpSecurity,
-        jwtAuthFilter: JwtAuthenticationFilter,
+        //jwtAuthFilter: JwtAuthenticationFilter,
         authenticationProvider: AuthenticationProvider,
         customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
         logoutService: LogoutService
@@ -46,61 +46,7 @@ class SecurityConfig {
              }
              .authorizeHttpRequests {
                     it
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/terms").permitAll()
-                        .requestMatchers("/api/v1/users/instructors/**").hasRole(ROLE_INSTRUCTOR)
-                        .requestMatchers("/api/v1/courses/**").hasRole(ROLE_INSTRUCTOR)
-
-                        .requestMatchers("/api/v1/users/students/info").hasRole(ROLE_STUDENT)
-                        .requestMatchers( "/api/v1/users/previous-grades").hasRole(ROLE_STUDENT)
-
-                        .requestMatchers(HttpMethod.GET,"/api/v1/applicationRequest/student/{studentId}").authenticated()
-                        .requestMatchers(HttpMethod.POST,"/api/v1/applicationRequest/student/la_history").authenticated()
-
-
-                        .requestMatchers(HttpMethod.PUT,"/api/v1/applicationRequest/{searchKey}/status").authenticated()
-                        .requestMatchers(HttpMethod.PUT,"/api/v1/applicationRequest/status").authenticated()
-
-                        .requestMatchers("/api/v1/applicationRequest/student/**").hasRole(ROLE_STUDENT)
-                        .requestMatchers("/api/v1/applicationRequest/student").hasRole(ROLE_STUDENT)
-                        .requestMatchers("/api/v1/applicationRequest/withdraw/{searchKey}").hasRole(ROLE_STUDENT)
-                        .requestMatchers("/api/v1/applicationRequest/{searchKey}/commit").hasRole(ROLE_STUDENT)
-                        .requestMatchers("/api/v1/applicationRequest/{searchKey}/uncommit").hasRole(ROLE_STUDENT)
-                        .requestMatchers("/api/v1/applicationRequest/{applicationReqId}/workHour").authenticated()
-
-                        .requestMatchers("/api/v1/applicationRequest/{applicationId}/accept-all").hasRole(ROLE_INSTRUCTOR)
-                        .requestMatchers("/api/v1/applicationRequest/{applicationId}/reject-all").hasRole(ROLE_INSTRUCTOR)
-                        .requestMatchers("/api/v1/applicationRequest/instructor/finalizeStatus/{searchKey}").hasRole(ROLE_INSTRUCTOR)
-                        .requestMatchers("/api/v1/applicationRequest/instructor/resetCommitment/{applicationReqId}").hasRole(ROLE_INSTRUCTOR)
-                        .requestMatchers("/api/v1/applicationRequest/instructor/redFlag/{applicationReqId}").hasRole(ROLE_INSTRUCTOR)
-                        .requestMatchers("/api/v1/applicationRequest/instructor/unRedFlag/{applicationReqId}").hasRole(ROLE_INSTRUCTOR)
-
-
-
-
-                        .requestMatchers(HttpMethod.GET,"/api/v1/applicationRequest/{searchKey}").authenticated()
-
-                        .requestMatchers("/api/v1/transcript/**").authenticated()
-
-                        .requestMatchers(HttpMethod.GET,"/api/v1/applications").authenticated()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/applications/{searchKey}").authenticated()
-
-                        .requestMatchers("/api/v1/applications/student/**").hasRole(ROLE_STUDENT)
-                        .requestMatchers("/api/v1/applications/**").hasRole(ROLE_INSTRUCTOR)
-                        .requestMatchers("/api/v1/applications/instructor/**").hasRole(ROLE_INSTRUCTOR)
-                        .requestMatchers("/api/v1/applications/instructor").hasRole(ROLE_INSTRUCTOR)
-
-                        .requestMatchers("/api/v1/terms/**").authenticated()
-                        .requestMatchers("/api/v1/users/info").authenticated()
-                        .requestMatchers("/ws").permitAll()
-                        .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers("/api/v1/notifications/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT,"/api/v1/applicationRequest/updateWorkHour/{searchKey}").hasRole(ROLE_INSTRUCTOR)
-                        .requestMatchers(HttpMethod.PUT,"/api/v1/applications/{searchKey}/mailUpdate").hasRole(ROLE_INSTRUCTOR)
-                        .anyRequest().hasRole(ROLE_ADMIN)
-                        //.anyRequest().permitAll()
-
-
+                        .anyRequest().permitAll()
              }
             .sessionManagement {
                     it
@@ -111,9 +57,9 @@ class SecurityConfig {
 
             }
 
-            .authenticationProvider(authenticationProvider)
 
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
+
+
 
              .logout {
                  it

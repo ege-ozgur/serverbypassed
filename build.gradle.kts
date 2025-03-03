@@ -69,6 +69,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.kafka:spring-kafka-test")
 
+	//database
+	implementation("org.mariadb.jdbc:mariadb-java-client:3.1.4")
 
 }
 

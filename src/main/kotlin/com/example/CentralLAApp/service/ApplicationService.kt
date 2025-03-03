@@ -44,7 +44,8 @@ class ApplicationService(
     private val notificationService: NotificationService,
     private val studentRepository: StudentRepository,
     private val httpService: HTTPService,
-    private val questionRepository: QuestionRepository
+    private val questionRepository: QuestionRepository,
+    private val userRepository: UserRepository
 ) {
     companion object {
         const val APPLICATION_ADDED_TITLE = "New Announcement"
@@ -56,20 +57,25 @@ class ApplicationService(
     }
 
     fun getAllApplications(user: User, pageable: Pageable): Page<ApplicationDTOResponse> {
-        val isStudent = user.role == UserRole.STUDENT
-        val applicationsPage = applicationRepository.findAllExcludingApplicants(pageable, user.userID)
-        val followingApplicationsSet = applicationRepository.getApplicationsByFollowersContains(user)
+        // Ensure the user is persistent
+        val persistentUser = userRepository.findById(user.userID)
+            .orElseThrow { NotFoundException("User with id ${user.userID} not found") }
+
+        val applicationsPage = applicationRepository.findAllExcludingApplicants(pageable, persistentUser.userID)
+        val followingApplicationsSet = applicationRepository.getApplicationsByFollowersContains(persistentUser)
             .map { it.applicationId }
             .toHashSet()
 
         val applicationsDTO = applicationsPage.content.map { application ->
-            val eligibility = if (isStudent) determineStudentEligibility(user, application) else null
+            val eligibility = if (persistentUser.role == UserRole.STUDENT) {
+                determineStudentEligibility(persistentUser, application)
+            } else null
             val isFollowing = application.applicationId in followingApplicationsSet
-
             convertToApplicationDTOResponse(application, isEligible = eligibility, isFollowing = isFollowing)
         }
         return PageImpl(applicationsDTO, pageable, applicationsPage.totalElements)
     }
+
 
 
     private fun determineStudentEligibility(user: User, application: Application): Eligibility? {
@@ -119,7 +125,10 @@ class ApplicationService(
     fun addApplication(theApplication: ApplicationDTORequest, userId: Int): ApplicationDTOResponse {
 
         val now = LocalDateTime.now()
-        val user = getUser()
+        val currentUser = getUser()  // might be a dummy or security context instance
+        val user = userRepository.findById(currentUser.userID).orElseThrow {
+            NotFoundException("User with id ${currentUser.userID} not found")
+        }
 
         val course: Course = courseRepository.findByCourseCode(theApplication.courseCode).getOrElse {
             val courseResponse = coursesService.addCourse(
@@ -601,7 +610,8 @@ class ApplicationService(
 
     fun addFollowerToApplication(searchKey: Any): ApplicationDTOResponse {
         val appId: Long = verifyLong(searchKey)
-        val user = getUser()
+        val user = userRepository.findById(getUser().userID)
+            .orElseThrow { NotFoundException("User not found") }
         //val user = studentRepository.getById(3) as User
 
         val application: Application = applicationRepository.findById(appId).orElseThrow {
@@ -634,7 +644,10 @@ class ApplicationService(
     }
 
     fun getApplicationsByFollower(): Collection<ApplicationDTOResponse> {
-        val user = getUser()
+        val currentUser = getUser()  // might be a dummy or security context instance
+        val user = userRepository.findById(currentUser.userID).orElseThrow {
+            NotFoundException("User with id ${currentUser.userID} not found")
+        }
         return applicationRepository.getApplicationsByFollowersContains(user).map { convertToApplicationDTOResponse(it) }
     }
 

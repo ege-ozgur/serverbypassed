@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono
 
 fun dummyUser(): User {
     return User.builder()
-        .id(18)
+        .id(17)
         .email("dummy@example.com")
         .password("dummy")
         .name("Dummy")

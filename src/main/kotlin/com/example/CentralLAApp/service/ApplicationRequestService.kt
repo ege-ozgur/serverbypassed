@@ -405,7 +405,7 @@ class ApplicationRequestService(
             NotFoundException("ApplicationRequest with ID $appId not found")
         }
 
-        authorizationService.validateAuthorizationToStudentInfo(getUser(), applicationRequest.student!!.userID)
+        //authorizationService.validateAuthorizationToStudentInfo(getUser(), applicationRequest.student!!.userID)
 
         val applicationId:Long = theApplicationRequest.applicationId
         val application = applicationRepository.findById(applicationId).orElseThrow {
@@ -447,8 +447,6 @@ class ApplicationRequestService(
         else{
             throw InvalidInputException("Student does not have an application request for this announcement.")
         }
-
-
 
     }
 

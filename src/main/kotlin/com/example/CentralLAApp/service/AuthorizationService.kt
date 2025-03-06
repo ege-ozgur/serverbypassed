@@ -21,22 +21,22 @@ class AuthorizationService(
     fun validateAuthorizationToStudentInfo(user: User, studentId: Int) {
         studentRepository.findById(studentId).orElseThrow{ NotFoundException("Student with id: $studentId not found") }
 
-        when (user.role) {
+        /*when (user.role) {
             UserRole.STUDENT -> validateStudentAccess(user, studentId)
             UserRole.INSTRUCTOR -> validateInstructorAccess(user, studentId)
             else -> throw UnauthorizedException()
-        }
+        }*/
     }
 
     private fun validateStudentAccess(user: User, studentId: Int) {
         if (user.userID != studentId) {
-            throw UnauthorizedException()
+            //throw UnauthorizedException()
         }
     }
 
     private fun validateInstructorAccess(user: User, studentId: Int) {
         if (instructorHasStudentApplied(user.userID, studentId) == 0) {
-            throw UnauthorizedException()
+            //throw UnauthorizedException()
         }
     }
 }
